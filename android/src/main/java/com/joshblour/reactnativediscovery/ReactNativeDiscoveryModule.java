@@ -139,12 +139,12 @@ public class ReactNativeDiscoveryModule extends ReactContextBaseJavaModule imple
      * Changing these properties will start/stop advertising/discovery
      */
     @ReactMethod
-    public void setShouldAdvertise(Boolean shouldAdvertise) {
+    public void setShouldAdvertise(String _uuid, Boolean shouldAdvertise) {
         mDiscovery.setShouldAdvertise(shouldAdvertise);
     }
 
     @ReactMethod
-    public void setShouldDiscover(Boolean shouldDiscover) {
+    public void setShouldDiscover(String _uuid, Boolean shouldDiscover) {
         mDiscovery.setShouldDiscover(shouldDiscover);
     }
 
