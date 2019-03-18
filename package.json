@@ -1,12 +1,24 @@
 {
   "name": "react-native-discovery",
-  "version": "0.1.0",
+  "version": "0.8.0",
+  "description": "Discover nearby devices using BLE for react native",
   "repository": {
     "type": "git",
-    "url": "https://github.com/joshblour/react-native-discovery.git"
+    "url": "https://github.com/N3TC4T/react-native-discovery.git"
   },
   "license": "MIT",
-  "keywords": ["react-native", "react-component", "ios", "ibeacon", "beacon", "dicovery"],
-  "main": "ReactNativeDiscovery",
-  "author": "Yonah Forst <yonaforst@hotmail.com>"
+  "keywords": [
+    "react-native",
+    "android",
+    "ios",
+    "ble",
+    "bluetooth",
+    "low energy",
+    "dicovery"
+  ],
+  "main": "RNDiscovery",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  },
+  "author": "N3TC4T <netcat.av@gmail.com>"
 }

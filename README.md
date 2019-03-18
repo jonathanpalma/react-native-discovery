@@ -1,83 +1,30 @@
-# Discovery
-Discover nearby devices using BLE.
+# React Native Discovery
+Discover nearby devices using BLE [Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy).
 
-React native implementation of https://github.com/omergul123/Discovery
+This is a porting of https://github.com/yonahforst/react-native-discovery project with alot of changes and bug fixes.
 
-(Android uses https://github.com/joshblour/discovery-android)
+![IMG_1547](https://user-images.githubusercontent.com/6250203/54543335-c7113e80-499d-11e9-9a21-6d6f49ae58c0.jpg)
 
-#### Changes from version 0.0.x
-Now supports discovery with multiple UUIDs. You need to intialize each one separately and specify the UUID when you perform actions.
-i.e. `Discovery.setShouldAdvertise(true);` now becomes `Discovery.setShouldAdvertise("3E1180E5-222E-43E9-98B4-E6C0DD18E728", true);`
 
 ## What
-Discovery is a very simple but useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (kind of ID or username determined by you on the running app on peer device) regardless of whether the app on peer device works at foreground or background state.
+Discovery is a very simple but useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (UUID determined by you on the running app on peer device) regardless of whether the app on peer device works at foreground or background state.
 
-#### Example
-```js
-const {DeviceEventEmitter} = require('react-native');
-const Discovery = require('react-native-discovery');
-const myUUID = "3E1180E5-222E-43E9-98B4-E6C0DD18E728";
+## Supported Platforms
+- iOS 8+
+- Android (API 19+)
 
-Discovery.initialize(
-  myUUID,
-  "SpacemanSpiff"
-);
-Discovery.setShouldAdvertise(myUUID, true);
-Discovery.setShouldDiscover(myUUID, true);
-
-// Listen for discovery changes
-DeviceEventEmitter.addListener(
-  'discoveredUsers',
-  (data) => {
-    if (data.uuid == myUUID) {
-      if (data.didChange || data.usersChanged) { //slight callback discrepancy between the iOS and Android libraries
-        console.log(data.users)
-      }
-    }
-  }
-);
-
-// Listen for bluetooth state changes
-DeviceEventEmitter.addListener(
-  'bleStateChanged',
-  (event) => {
-    console.log('BLE is On: ' + event.isOn)
-  }
-);
-
-
-```
-
-
-#### API
-
-`initialize(uuid, username)` - string, string. Initialize the Discovery object with a UUID specific to your app, and a username specific to your device. Returns a promise which resolves to the specified UUID
-
-`setPaused(uuid, isPaused)` - string, bool. pauses advertising and detection for the specified uuid. Returns a promise which resolves to true.
-
-`setShouldDiscover(uuid, shouldDiscover)` - string, bool. starts and stops discovery for the specified uuid. Returns a promise which resolves to true.
-
-`setShouldAdvertise(uuid, shouldAdvertise)` - string, bool. starts and stops advertising for the specified uuid. Returns a promise which resolves to true.
-
-`setUserTimeoutInterval(uuid, userTimeoutInterval)` - string, integer in seconds (default is 5). After not seeing a user for x seconds, we remove him from the users list in our callback (for the specified uuid). Returns a promise which resolves to true.
-  
-  
-*The following two methods are specific to the Android version, since the Android docs advise against continuous scanning. Instead, we cycle scanning on and off. This also allows us to modify the scan behaviour when the app moves to the background.*
-
-`setScanForSeconds(uuid, scanForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the ON part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
-    
-`setWaitForSeconds(uuid, waitForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the OFF part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
-
-
-## Setup
+## Getting started
 
 ````
-npm install --save react-native-discovery
+npm install --save https://github.com/N3TC4T/react-native-discovery
 ````
 
-### iOS
-* Run open node_modules/react-native-discovery
-* Drag ReactNativeDiscovery.xcodeproj into your Libraries group
+#### iOS
+
+1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
+2. Go to `node_modules` ➜ `react-native-discovery` and add `ReactNativeDiscovery.xcodeproj`
+3. In XCode, in the project navigator, select your project. Add `libReactNativeDiscovery.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
+4. Run your project (`Cmd+R`)<
 
 ### Android
 ##### Step 1 - Update Gradle Settings
@@ -100,7 +47,19 @@ dependencies {
     compile project(':react-native-discovery')
 }
 ```
-##### Step 3 - Register React Package
+
+##### Step 3 - Update Android Manifest
+
+```xml
+// file: android/app/src/main/AndroidManifest.xml
+...
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+...
+```
+
+##### Step 4 - Register React Package
 ```
 ...
 import com.joshblour.reactnativediscovery.ReactNativeDiscoveryPackage; // <--- import
@@ -113,10 +72,61 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            new ReactNativeDiscoveryPackage(this) // <------ add the package
+            new ReactNativeDiscoveryPackage() // <------ add the package
         );
     }
 
     ...
 }
 ```
+
+
+
+#### Example
+```js
+import Discovery from "react-native-discovery";
+
+const myUUID = "3E1180E5-222E-43E9-98B4-E6C0DD18E728";
+const myService = "XRPLV1"
+
+Discovery.initialize(myUUID, myService).then(uuid => {
+  Discovery.setShouldAdvertise(true);
+  Discovery.setShouldDiscover(true);
+});
+
+// Listen for discovery changes
+Discovery.on("discoveredUsers", (data) => { console.log(data.users) } );
+
+// Listen for bluetooth state changes
+Discovery.on('bleStateChanged', (event) => { console.log('BLE is On: ' + event.isOn) } );
+
+
+```
+
+Or, you can still look into the whole [example](https://github.com/N3TC4T/react-native-discovery/tree/master/example) folder for a standalone project.
+
+
+
+#### API
+
+`initialize(uuid, service)` - string, string. Initialize the Discovery object with a UUID specific to your device, and a service specific to your app. Returns a promise which resolves to the specified UUID
+
+`setPaused(isPaused)` - string, bool. pauses advertising and detection
+
+`setShouldDiscover(shouldDiscover)` - string, bool. starts and stops discovery
+
+`setShouldAdvertise(shouldAdvertise)` - string, bool. starts and stops advertising
+
+`setUserTimeoutInterval(userTimeoutInterval)` - string, integer in seconds (default is 10). After not seeing a user for x seconds, we remove him from the users list in our callback (for the specified uuid)
+  
+*The following two methods are specific to the Android version, since the Android docs advise against continuous scanning. Instead, we cycle scanning on and off. This also allows us to modify the scan behaviour when the app moves to the background.*
+
+`setScanForSeconds(scanForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the ON part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
+    
+`setWaitForSeconds(waitForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the OFF part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
+
+`getBluetoothState()` - Returns a promise, which will return a boolean value, true if bluetooth is enabled, false if disabled.
+
+`setBluetoothOn()` - Changes bluetooth state to On, Returns a promise, which returns whether the change was successful or not.
+
+`setBluetoothOff()` - Changes bluetooth state to Off, Returns a promise, which returns whether the change was successful or not.
