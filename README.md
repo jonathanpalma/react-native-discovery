@@ -62,7 +62,7 @@ dependencies {
 ##### Step 4 - Register React Package
 ```
 ...
-import com.joshblour.reactnativediscovery.ReactNativeDiscoveryPackage; // <--- import
+import com.joshblour.RNDiscovery.RNDiscoveryPackage; // <--- import
 
 public class MainActivity extends ReactActivity {
 
@@ -72,7 +72,7 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            new ReactNativeDiscoveryPackage() // <------ add the package
+            new RNDiscoveryPackage() // <------ add the package
         );
     }
 
