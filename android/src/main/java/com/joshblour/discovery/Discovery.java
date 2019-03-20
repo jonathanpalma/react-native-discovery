@@ -224,7 +224,11 @@ public class Discovery implements MultiScanner.MultiScannerCallback, GattManager
         if (getBluetoothAdapter().isEnabled() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AdvertiserService.shouldAutoRestart = true;
             if (!AdvertiserService.running) {
-                mContext.startService(getAdvertiserServiceIntent(mContext));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mContext.startForegroundService(getAdvertiserServiceIntent(mContext));
+                } else {
+                    mContext.startService(getAdvertiserServiceIntent(mContext));
+                }
                 Log.v(TAG, "started advertising");
             }
         }
