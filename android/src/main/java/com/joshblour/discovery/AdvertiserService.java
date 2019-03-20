@@ -23,6 +23,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.app.Notification;
+
 
 /**
  * Created by Yonah on 21/01/16.
@@ -112,6 +114,7 @@ public class AdvertiserService extends Service {
         // Register for broadcasts on BluetoothAdapter state change
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
+        startForeground(1,new Notification());
     }
 
     @Override
