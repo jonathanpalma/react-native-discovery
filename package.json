@@ -1,5 +1,5 @@
 {
-  "name": "react-native-discovery",
+  "name": "@N3TC4T/react-native-discovery",
   "version": "0.8.0",
   "description": "Discover nearby devices using BLE for react native",
   "repository": {
