@@ -16,7 +16,7 @@ Discovery is a very simple but useful library for discovering nearby devices wit
 ## Getting started
 
 ````
-npm i @n3tc4t/react-native-discovery
+npm install --save https://github.com/N3TC4T/react-native-discovery	
 ````
 
 #### iOS
