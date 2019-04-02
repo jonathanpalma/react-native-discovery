@@ -21,16 +21,9 @@ import {
 
 import Discovery from "react-native-discovery";
 
-function uuidv4() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
 
-const MY_UUID = uuidv4();
-const SERVICE_NAME = "XRPL";
+const MY_UUID = "9bfdc12c-9d5b-40bd-9a9e-2f5e57f73d5a";
+const SERVICE_NAME = "XRPTIP";
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -41,7 +34,7 @@ export default class App extends Component<Props> {
       discovered: [],
       bluetoothStatus: "false",
       paused: false,
-      appState: ''
+      appState: 'inactive'
     };
   }
 
@@ -52,6 +45,7 @@ export default class App extends Component<Props> {
     AppState.addEventListener('change', this.handleAppStateChange);
 
     Discovery.initialize(MY_UUID, SERVICE_NAME).then(uuid => {
+      console.log("Discovery initialized!")
       Discovery.setShouldAdvertise(true);
       Discovery.setShouldDiscover(true);
     });
@@ -67,18 +61,11 @@ export default class App extends Component<Props> {
     this.setState({
       bluetoothStatus: event.isOn ? "true" : "false"
     });
-    if (!event.isOn) {
-      this.pause(true)
-    }
-
-    if (event.isOn) {
-      this.pause(false)
-    }
   };
 
   handleDiscover = data => {
     const { discovered } = this.state;
-    console.log(data);
+    console.log(data)
     if (discovered !== data.users) {
       this.setState({
         discovered: data.users
@@ -87,13 +74,11 @@ export default class App extends Component<Props> {
     //slight callback discrepancy between the iOS and Android libraries
   };
 
-
-
   pause = (value) => {
     const { paused } = this.state ;
     if(value){
       if (!paused) {
-        console.log("Set paused the discovery to On")
+        console.log("Pause the discvoery module")
         Discovery.setPaused(true);
         this.setState({
           paused: true
@@ -101,7 +86,7 @@ export default class App extends Component<Props> {
       }
     }else{
       if (paused) {
-        console.log("Set paused the discovery to Off")
+        console.log("Continue the discovery module")
         Discovery.setPaused(false);
         this.setState({
           paused: false
@@ -124,7 +109,6 @@ export default class App extends Component<Props> {
   checkBluetooth = () => {
     if (Platform.OS === "android") {
       Discovery.getBluetoothState((status) => {
-          console.log(status)
           if(status !== true){
             Discovery.setBluetoothOn(() => {});
           }
@@ -141,7 +125,7 @@ export default class App extends Component<Props> {
           console.log("Permission is OK: true");
           return true;
         } else {
-          PermissionsAndroid.requestPermission(
+          PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
           ).then(result => {
             if (result) {

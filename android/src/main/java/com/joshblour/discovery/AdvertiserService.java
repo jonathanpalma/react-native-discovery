@@ -114,7 +114,11 @@ public class AdvertiserService extends Service {
         // Register for broadcasts on BluetoothAdapter state change
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
-        startForeground(1,new Notification());
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int NOTIFICATION_ID = (int) (System.currentTimeMillis()%10000);
+            startForeground(NOTIFICATION_ID, new Notification.Builder(this).build());
+        }
     }
 
     @Override

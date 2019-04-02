@@ -32,6 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * Created by Yonah on 15/10/15.
@@ -337,6 +341,44 @@ public class Discovery implements MultiScanner.MultiScannerCallback, GattManager
         return bleUser;
     }
 
+    private List<UUID> parseUuids(byte[] advertisedData) {
+        List<UUID> uuids = new ArrayList<>();
+
+        ByteBuffer buffer = ByteBuffer.wrap(advertisedData).order(ByteOrder.LITTLE_ENDIAN);
+        while (buffer.remaining() > 2) {
+            byte length = buffer.get();
+            if (length == 0) break;
+
+            byte type = buffer.get();
+            switch (type) {
+                case 0x02: // Partial list of 16-bit UUIDs
+                case 0x03: // Complete list of 16-bit UUIDs
+                    while (length >= 2) {
+                        uuids.add(UUID.fromString(String.format("%08x-0000-1000-8000-00805f9b34fb", buffer.getShort())));
+                        length -= 2;
+                    }
+                    break;
+
+                case 0x06: // Partial list of 128-bit UUIDs
+                case 0x07: // Complete list of 128-bit UUIDs
+                    while (length >= 16) {
+                        long lsb = buffer.getLong();
+                        long msb = buffer.getLong();
+                        uuids.add(new UUID(msb, lsb));
+                        length -= 16;
+                    }
+                    break;
+
+                default:
+                    buffer.position(buffer.position() + length - 1);
+                    break;
+            }
+        }
+
+        return uuids;
+    }
+
+
     @Override
     public void onScanResult(BluetoothDevice device, int rssi, byte[] scanRecord) {
 
@@ -357,18 +399,21 @@ public class Discovery implements MultiScanner.MultiScannerCallback, GattManager
             String service = bleUser.getService();
             if(service != null){
                 if (service.equals(getService())) {
+                    Log.v(TAG, device.getAddress() + " - found MY service!");
                     bleUser.setIsMyService(true);
                     updateList(true);
 
-                    ParcelUuid[] uuids = device.getUuids();
+                    List<UUID> uuids = parseUuids(scanRecord);
                     // if there is any UUID in discovered devices
-                     if (uuids != null && uuids.length > 0) {
-                        ParcelUuid uuid = uuids[uuids.length - 1];
+                     if (uuids != null && uuids.size() > 0) {
+                        ParcelUuid uuid = new ParcelUuid(uuids.get(0));
+                        Log.v(TAG, device.getAddress() + " - found UUIDS from advisering data!");
                         bleUser.setUUID(uuid);
                         bleUser.setIdentified(true);
                         updateList(true);
                     }else{
                         // else connect to device and get user UUID
+                        Log.v(TAG, device.getAddress() + " - couldn't get UUIDS, connecting...");
                         if (mGattManager == null)
                             mGattManager = new GattManager(mContext, mService, this);
                         mGattManager.identify(device);

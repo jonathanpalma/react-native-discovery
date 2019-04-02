@@ -79,28 +79,6 @@ public class MultiScanner {
 
             List<ScanFilter> filters = new ArrayList<>();
 
-            if (mServiceUUID != null) {
-                // filtering by the ServiceUUID prevents us from discovering iOS devices broadcasting in the background
-                // since their serviceUUID gets moved into the 'overflow area'.
-                // we need to find a way to filter also by the manufacturerData to find only devices with our UUID.
-                // more here: https://forums.developer.apple.com/thread/11705
-                ScanFilter serviceUUIDFilter = new ScanFilter.Builder().setServiceUuid(mServiceUUID).build();
-                filters.add(serviceUUIDFilter);
-
-
-//                // An alternative is to filter by manufacturer data,
-//                // but I still haven't figured out how to show only apple devices
-//
-//                // Empty data
-//                byte[] manData = new byte[]{1,0,0,0,0,0,0,0,0,0,0,0,0,8,64,0,0};
-//                // Data Mask
-//                byte[] mask = new byte[]{1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1};
-//                // Add data array to filters
-//                ScanFilter manDataFilter = new ScanFilter.Builder().setManufacturerData(76, manData, mask).build();
-//                filters.add(manDataFilter);
-            }
-
-
             if (mPostLScanCallback == null)
                 mPostLScanCallback = new PostLScanCallback();
                 mAdapter.getBluetoothLeScanner().startScan(filters, settings, mPostLScanCallback );
