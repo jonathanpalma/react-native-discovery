@@ -3,7 +3,6 @@
     package="com.joshblour.RNDiscovery">
 
     <application
-        android:label="@string/app_name"
         android:supportsRtl="true"
     >
         <!-- Service to handle BLE Advertising - Using a service allows advertising to continue
