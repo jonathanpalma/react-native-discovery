@@ -42,6 +42,7 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
     private static ParcelUuid mDiscoveryUUID;
     private int mScanForSeconds;
     private int mWaitForSeconds;
+    private boolean initialized;
 
     private final BroadcastReceiver mBleStateReceiver = new BroadcastReceiver() {
         @Override
@@ -74,6 +75,7 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
 
         mDiscoveryUUID = ParcelUuid.fromString(uuid);
         mDiscovery =  new Discovery(getReactApplicationContext(), mDiscoveryUUID, service, Discovery.DIStartOptions.DIStartNone, this);
+        initialized = true;
 
         getReactApplicationContext().addLifecycleEventListener(this);
 
@@ -142,13 +144,23 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
      * Changing these properties will start/stop advertising/discovery
      */
     @ReactMethod
-    public void setShouldAdvertise(Boolean shouldAdvertise) {
-        mDiscovery.setShouldAdvertise(shouldAdvertise);
+    public void setShouldAdvertise(Boolean shouldAdvertise, Promise promise) {
+        if (initialized) {
+            mDiscovery.setShouldAdvertise(shouldAdvertise);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        }
     }
 
     @ReactMethod
-    public void setShouldDiscover(Boolean shouldDiscover) {
-        mDiscovery.setShouldDiscover(shouldDiscover);
+    public void setShouldDiscover(Boolean shouldDiscover, Promise promise) {
+        if (initialized) {
+            mDiscovery.setShouldDiscover(shouldDiscover);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        }
     }
 
     /*
@@ -156,28 +168,48 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
      * The default value is 3 seconds. You can set your own values.
      */
     @ReactMethod
-    public void setUserTimeoutInterval(int userTimeoutInterval) {
-        mDiscovery.setUserTimeoutInterval(userTimeoutInterval);
+    public void setUserTimeoutInterval(int userTimeoutInterval, Promise promise) {
+        if (initialized) {
+            mDiscovery.setUserTimeoutInterval(userTimeoutInterval);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        }
     }
 
     @ReactMethod
-    public void setScanForSeconds(int scanForSeconds) {
-        mScanForSeconds = scanForSeconds;
-        mDiscovery.setScanForSeconds(mScanForSeconds);
+    public void setScanForSeconds(int scanForSeconds, Promise promise) {
+        if (initialized) {
+            mScanForSeconds = scanForSeconds;
+            mDiscovery.setScanForSeconds(mScanForSeconds);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        } 
     }
 
     @ReactMethod
-    public void setWaitForSeconds(int waitForSeconds) {
-        mWaitForSeconds = waitForSeconds;
-        mDiscovery.setWaitForSeconds(mWaitForSeconds);
+    public void setWaitForSeconds(int waitForSeconds, Promise promise) {
+        if (initialized) {
+            mWaitForSeconds = waitForSeconds;
+            mDiscovery.setWaitForSeconds(mWaitForSeconds);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        } 
     }
 
     /**
      * Set this to YES, if your app will disappear, or set to NO when it will appear.
      */
     @ReactMethod
-    public void setPaused(Boolean paused) {
-        mDiscovery.setPaused(paused);
+    public void setPaused(Boolean paused, Promise promise) {
+        if (initialized) {
+            mDiscovery.setPaused(paused);
+            promise.resolve(true);
+        }else{
+            promise.reject("discovery not initialized");
+        } 
     }
 
 
@@ -248,19 +280,25 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
 
     @Override
     public void onHostResume() {
-        mDiscovery.setWaitForSeconds(mWaitForSeconds);
+        if (initialized) {
+            mDiscovery.setWaitForSeconds(mWaitForSeconds);
+        }
     }
 
     @Override
     public void onHostPause() {
-        mDiscovery.setWaitForSeconds(mWaitForSeconds * 6);
+        if (initialized) {
+            mDiscovery.setWaitForSeconds(mWaitForSeconds * 6);
+        }
     }
 
     @Override
     public void onHostDestroy() {
         Log.e("TAG", "ACTIVITY DESTROYED");
-        mDiscovery.setShouldAdvertise(false);
-        mDiscovery.setShouldDiscover(false);
+        if (initialized) {
+            mDiscovery.setShouldAdvertise(false);
+            mDiscovery.setShouldDiscover(false);
+        }
         getReactApplicationContext().unregisterReceiver(mBleStateReceiver);
     }
     /**
