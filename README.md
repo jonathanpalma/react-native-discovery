@@ -7,7 +7,7 @@ This is a porting of https://github.com/yonahforst/react-native-discovery projec
 
 
 ## What
-Discovery is a very simple but useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (UUID determined by you on the running app on peer device) regardless of whether the app on peer device works at foreground or background state.
+RNDiscovery is a useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (UUID) that can be an unique ID for device or user.
 
 ## Supported Platforms
 - iOS 8+
@@ -87,7 +87,7 @@ public class MainActivity extends ReactActivity {
 import Discovery from "react-native-discovery";
 
 const myUUID = "3E1180E5-222E-43E9-98B4-E6C0DD18E728";
-const myService = "XRPLV1"
+const myService = "MYAPP"
 
 Discovery.initialize(myUUID, myService).then(uuid => {
   Discovery.setShouldAdvertise(true);
@@ -109,24 +109,22 @@ Or, you can still look into the whole [example](https://github.com/N3TC4T/react-
 
 #### API
 
-`initialize(uuid, service)` - string, string. Initialize the Discovery object with a UUID specific to your device, and a service specific to your app. Returns a promise which resolves to the specified UUID
+Method | Params | Info
+------ | ------- | ----
+initialize(uuid, service) | string, string | Initialize the Discovery object with a UUID specific to your device, and a service specific to your app. Returns a promise which resolves to the specified UUID
+setPaused(isPaused) | bool | pauses advertising and detection
+setShouldDiscover(shouldDiscover) | bool | starts and stops discovery
+setShouldAdvertise(shouldAdvertise) | bool | starts and stops advertising
+setUserTimeoutInterval(userTimeoutInterval) | integer in seconds | After not seeing a user for x seconds, we remove him from the users list in our callback (for the specified uuid)
 
-`setPaused(isPaused)` - string, bool. pauses advertising and detection
-
-`setShouldDiscover(shouldDiscover)` - string, bool. starts and stops discovery
-
-`setShouldAdvertise(shouldAdvertise)` - string, bool. starts and stops advertising
-
-`setUserTimeoutInterval(userTimeoutInterval)` - string, integer in seconds (default is 10). After not seeing a user for x seconds, we remove him from the users list in our callback (for the specified uuid)
   
-*The following two methods are specific to the Android version, since the Android docs advise against continuous scanning. Instead, we cycle scanning on and off. This also allows us to modify the scan behaviour when the app moves to the background.*
+*The following methods are specific to the Android version.*
 
-`setScanForSeconds(scanForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the ON part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
-    
-`setWaitForSeconds(waitForSeconds)` - string, integer in seconds (default is 5). This parameter specifies the duration of the OFF part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
-
-`getBluetoothState()` - Returns a promise, which will return a boolean value, true if bluetooth is enabled, false if disabled.
-
-`setBluetoothOn()` - Changes bluetooth state to On, Returns a promise, which returns whether the change was successful or not.
-
-`setBluetoothOff()` - Changes bluetooth state to Off, Returns a promise, which returns whether the change was successful or not.
+Method | Params | Info
+------ | ------- | ----
+setScanForSeconds(scanForSeconds) | integer in seconds | This parameter specifies the duration of the ON part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
+setWaitForSeconds(waitForSeconds) |  integer in seconds | This parameter specifies the duration of the OFF part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
+isBluetoothEnabled() | null | Returns a promise, which will return a boolean value, true if bluetooth is enabled, false if disabled.
+setBluetoothOn() | null | Changes bluetooth state to On, Returns a promise, which returns whether the change was successful or not.
+setBluetoothOff() | null | Changes bluetooth state to Off, Returns a promise, which returns whether the change was successful or not.
+isLocationEnabled() | null | Returns a promise, which will return a boolean value, true if location is enabled, false if disabled.

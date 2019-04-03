@@ -3,6 +3,7 @@ package com.joshblour.RNDiscovery;
 import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
+import android.location.LocationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -180,17 +181,43 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
     }
 
 
+   /**
+    * Get Location status 
+    from: https://github.com/philiWeitz/react-native-location-switch
+    */
+    @ReactMethod
+    public void isLocationEnabled(Promise promise) {
+        LocationManager lm = (LocationManager) getCurrentActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(gps_enabled || network_enabled) {
+            promise.resolve(true);
+        } else {
+            promise.resolve(false);
+        }
+    }
+
+
     /**
     * Get bluetooth status 
     from: https://github.com/solinor/react-native-bluetooth-status
     */
     @ReactMethod
-    public void getBluetoothState(Callback callback) {
+    public void isBluetoothEnabled(Promise promise) {
         boolean isEnabled = false;
         if (BluetoothAdapter.getDefaultAdapter() != null) {
             isEnabled = BluetoothAdapter.getDefaultAdapter().isEnabled();
         }
-        callback.invoke(null, isEnabled);
+        promise.resolve(isEnabled);
     }
 
 
@@ -199,11 +226,11 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
     from: https://github.com/solinor/react-native-bluetooth-status
     */
     @ReactMethod
-    public void setBluetoothOn(Callback callback) {
+    public void setBluetoothOn(Promise promise) {
         if (BluetoothAdapter.getDefaultAdapter().getDefaultAdapter() != null) {
             BluetoothAdapter.getDefaultAdapter().getDefaultAdapter().enable();
         }
-        callback.invoke(null, BluetoothAdapter.getDefaultAdapter() != null);
+        promise.resolve(BluetoothAdapter.getDefaultAdapter() != null);
     }
 
     /**
@@ -211,11 +238,11 @@ public class RNDiscoveryModule extends ReactContextBaseJavaModule implements Dis
     from: https://github.com/solinor/react-native-bluetooth-status
     */
     @ReactMethod
-    public void setBluetoothOff(Callback callback) {
+    public void setBluetoothOff(Promise promise) {
         if (BluetoothAdapter.getDefaultAdapter() != null) {
             BluetoothAdapter.getDefaultAdapter().disable();
         }
-        callback.invoke(null, BluetoothAdapter.getDefaultAdapter() != null);
+        promise.resolve(BluetoothAdapter.getDefaultAdapter() != null);
     }
 
 

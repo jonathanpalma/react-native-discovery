@@ -21,7 +21,6 @@ import {
 
 import Discovery from "react-native-discovery";
 
-
 const MY_UUID = "9bfdc12c-9d5b-40bd-9a9e-2f5e57f73d5a";
 const SERVICE_NAME = "XRPTIP";
 
@@ -32,20 +31,22 @@ export default class App extends Component<Props> {
 
     this.state = {
       discovered: [],
-      bluetoothStatus: "false",
+      bluetoothStatus: "Unknonw",
+      locationStatus: "Unknonw",
       paused: false,
-      appState: 'inactive'
+      appState: "inactive"
     };
   }
 
   componentDidMount() {
     this.checkPermission();
     this.checkBluetooth();
+    this.checkLocation();
 
-    AppState.addEventListener('change', this.handleAppStateChange);
+    AppState.addEventListener("change", this.handleAppStateChange);
 
     Discovery.initialize(MY_UUID, SERVICE_NAME).then(uuid => {
-      console.log("Discovery initialized!")
+      console.log("Discovery initialized!");
       Discovery.setShouldAdvertise(true);
       Discovery.setShouldDiscover(true);
     });
@@ -65,7 +66,7 @@ export default class App extends Component<Props> {
 
   handleDiscover = data => {
     const { discovered } = this.state;
-    console.log(data)
+    console.log(data);
     if (discovered !== data.users) {
       this.setState({
         discovered: data.users
@@ -74,45 +75,55 @@ export default class App extends Component<Props> {
     //slight callback discrepancy between the iOS and Android libraries
   };
 
-  pause = (value) => {
-    const { paused } = this.state ;
-    if(value){
+  pause = value => {
+    const { paused } = this.state;
+    if (value) {
       if (!paused) {
-        console.log("Pause the discvoery module")
+        console.log("Pause the discvoery module");
         Discovery.setPaused(true);
         this.setState({
           paused: true
         });
       }
-    }else{
+    } else {
       if (paused) {
-        console.log("Continue the discovery module")
+        console.log("Continue the discovery module");
         Discovery.setPaused(false);
         this.setState({
           paused: false
         });
       }
     }
+  };
 
-  }
-
-  handleAppStateChange = (nextAppState) => {
-    const { appState, paused } = this.state ;
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      this.pause(false)
-    }else{
-      this.pause(true)
+  handleAppStateChange = nextAppState => {
+    const { appState, paused } = this.state;
+    if (appState.match(/inactive|background/) && nextAppState === "active") {
+      this.pause(false);
+    } else {
+      this.pause(true);
     }
-    this.setState({appState: nextAppState});
-  }
+    this.setState({ appState: nextAppState });
+  };
 
   checkBluetooth = () => {
     if (Platform.OS === "android") {
-      Discovery.getBluetoothState((status) => {
-          if(status !== true){
-            Discovery.setBluetoothOn(() => {});
-          }
-      })
+      // if bluetooth is not enable enable it
+      Discovery.isBluetoothEnabled().then(status => {
+        if (status !== true) {
+          Discovery.setBluetoothOn(() => {});
+        }
+      });
+    }
+  };
+
+  checkLocation = () => {
+    if (Platform.OS === "android") {
+      Discovery.isLocationEnabled().then(status => {
+        this.setState({
+          locationStatus: status ? "true" : "false"
+        });
+      });
     }
   };
 
@@ -142,7 +153,7 @@ export default class App extends Component<Props> {
   };
 
   render() {
-    const { discovered, bluetoothStatus } = this.state;
+    const { discovered, bluetoothStatus, locationStatus } = this.state;
 
     return (
       <View style={styles.container}>
@@ -153,9 +164,24 @@ export default class App extends Component<Props> {
         </View>
         <View style={{ flex: 1, backgroundColor: "#E9EBEE", ...styles.center }}>
           <Text style={{ textAlign: "center" }}>
-            Bluetooth is On: {bluetoothStatus}
+            Bluetooth is On:{" "}
+            <Text
+              style={{ color: bluetoothStatus === "true" ? "green" : "red" }}
+            >
+              {bluetoothStatus}
+            </Text>
           </Text>
-          <Text style={{ textAlign: "center" }}>My UUID : {MY_UUID}</Text>
+          <Text style={{ textAlign: "center" }}>
+            Location is On:{" "}
+            <Text
+              style={{ color: locationStatus === "true" ? "green" : "red" }}
+            >
+              {locationStatus}
+            </Text>
+          </Text>
+          <Text style={{ textAlign: "center" }}>
+            My UUID : <Text style={{ color: "orange" }}>{MY_UUID}</Text>
+          </Text>
         </View>
         <View style={{ flex: 6 }}>
           <FlatList
