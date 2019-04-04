@@ -107,14 +107,14 @@ export default class App extends Component<Props> {
   };
 
   checkBluetooth = () => {
-    if (Platform.OS === "android") {
-      // if bluetooth is not enable enable it
-      Discovery.isBluetoothEnabled().then(status => {
-        if (status !== true) {
+    // if bluetooth is not enable enable it
+    Discovery.isBluetoothEnabled().then(status => {
+      if (status !== true) {
+        if (Platform.OS === "android") {
           Discovery.setBluetoothOn(() => {});
         }
-      });
-    }
+      }
+    });
   };
 
   checkLocation = () => {

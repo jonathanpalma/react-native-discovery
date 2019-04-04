@@ -116,6 +116,7 @@ setPaused(isPaused) | bool | pauses advertising and detection
 setShouldDiscover(shouldDiscover) | bool | starts and stops discovery
 setShouldAdvertise(shouldAdvertise) | bool | starts and stops advertising
 setUserTimeoutInterval(userTimeoutInterval) | integer in seconds | After not seeing a user for x seconds, we remove him from the users list in our callback (for the specified uuid)
+isBluetoothEnabled() | null | Returns a promise, which will return a boolean value, true if bluetooth is enabled, false if disabled.
 
   
 *The following methods are specific to the Android version.*
@@ -124,7 +125,6 @@ Method | Params | Info
 ------ | ------- | ----
 setScanForSeconds(scanForSeconds) | integer in seconds | This parameter specifies the duration of the ON part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
 setWaitForSeconds(waitForSeconds) |  integer in seconds | This parameter specifies the duration of the OFF part of the scan cycle for the specified uuid. Returns a promise which resolves to true.
-isBluetoothEnabled() | null | Returns a promise, which will return a boolean value, true if bluetooth is enabled, false if disabled.
 setBluetoothOn() | null | Changes bluetooth state to On, Returns a promise, which returns whether the change was successful or not.
 setBluetoothOff() | null | Changes bluetooth state to Off, Returns a promise, which returns whether the change was successful or not.
 isLocationEnabled() | null | Returns a promise, which will return a boolean value, true if location is enabled, false if disabled.

@@ -23,7 +23,20 @@ RCT_EXPORT_MODULE()
 #pragma mark Initialization
 
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        NSDictionary *options = @{CBCentralManagerOptionShowPowerAlertKey: @NO};
+        _bluetoothManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue() options:options];
+    }
+    
+    return self;
+}
 
++(BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
 
 /**
  * Initialize the Discovery object with a UUID specific to your device, and a service specific to your app.
@@ -176,6 +189,21 @@ RCT_REMAP_METHOD(setPaused, paused:(BOOL)paused resolve:(RCTPromiseResolveBlock)
         reject(@"not_initialized", [NSString stringWithFormat:@"discovery not initialized"], [NSError errorWithDomain:@"RNDiscovery" code:0 userInfo:nil]);
     }
 }
+
+RCT_REMAP_METHOD(isBluetoothEnabled, resolve:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    if(_bluetoothManager) {
+        if([_bluetoothManager state] == CBCentralManagerStatePoweredOn) {
+            resolve(@YES);
+        }
+        else {
+            resolve(@NO);
+        }
+    }
+}
+
+-(void)centralManagerDidUpdateState:(CBCentralManager *)central{}
+
 
 
 @end

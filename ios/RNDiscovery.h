@@ -4,6 +4,10 @@
 #import "RCTBridgeModule.h"
 #endif
 
-@interface RNDiscovery : NSObject <RCTBridgeModule>
+#import <CoreBluetooth/CoreBluetooth.h>
 
+
+@interface RNDiscovery : NSObject <RCTBridgeModule>{
+    CBCentralManager *_bluetoothManager;
+}
 @end
