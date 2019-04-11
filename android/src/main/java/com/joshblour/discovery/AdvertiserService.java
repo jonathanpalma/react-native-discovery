@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.app.Notification;
 
 
 /**
@@ -73,10 +72,8 @@ public class AdvertiserService extends Service {
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
-    private BluetoothGattServer mGattServer;
 
     private AdvertiseCallback mAdvertiseCallback;
-    private BluetoothGattServerCallback mGattServerCallback;
     private ParcelUuid mUUID;
     private String mService;
 
@@ -114,11 +111,6 @@ public class AdvertiserService extends Service {
         // Register for broadcasts on BluetoothAdapter state change
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int NOTIFICATION_ID = (int) (System.currentTimeMillis()%10000);
-            startForeground(NOTIFICATION_ID, new Notification.Builder(this).build());
-        }
     }
 
     @Override
@@ -135,18 +127,6 @@ public class AdvertiserService extends Service {
 
         // Unregister broadcast listeners
         unregisterReceiver(mReceiver);
-
-
-        /**
-         * If autorestart is true, launch a new service right before this one is killed. this
-         * ensures that the system does turn off advertising by killing the service.
-         */
-        if (shouldAutoRestart) {
-            Intent intent = new Intent(this, AdvertiserService.class);
-            intent.putExtra("uuid", mUUID.toString());
-            intent.putExtra("service", mService);
-            startService(intent);
-        }
 
         super.onDestroy();
     }
@@ -202,15 +182,6 @@ public class AdvertiserService extends Service {
             mAdvertiseCallback = new MyAdvertiseCallback();
         }
 
-        if (mGattServerCallback == null) {
-            mGattServerCallback = new MyGattServerCallback();
-        }
-
-        if (mGattServer == null) {
-            mGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
-            mGattServer.addService(buildGattService());
-        }
-
         if (mBluetoothLeAdvertiser != null) {
             AdvertiseSettings settings = buildAdvertiseSettings();
             AdvertiseData data = buildAdvertiseData();
@@ -227,12 +198,6 @@ public class AdvertiserService extends Service {
         if (mBluetoothLeAdvertiser != null) {
             mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
             mAdvertiseCallback = null;
-        }
-
-        if (mGattServer != null) {
-            mGattServer.clearServices();
-            mGattServer.close();
-            mGattServer = null;
         }
     }
 
@@ -293,30 +258,6 @@ public class AdvertiserService extends Service {
         gattCharacteristic.setValue(mService);
         gattService.addCharacteristic(gattCharacteristic);
         return gattService;
-    }
-
-    /*
-    * Callback handles all incoming requests from GATT clients.
-    * From connections to read/write requests.
-    */
-    private class MyGattServerCallback extends BluetoothGattServerCallback {
-        @Override
-        public void onCharacteristicReadRequest(BluetoothDevice device,
-                                                int requestId,
-                                                int offset,
-                                                BluetoothGattCharacteristic characteristic) {
-            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
-//            Log.i(TAG, "onCharacteristicReadRequest " + characteristic.getUuid().toString());
-
-            if (characteristic.getUuid().equals(mUUID.getUuid())) {
-                mGattServer.sendResponse(device,
-                        requestId,
-                        BluetoothGatt.GATT_SUCCESS,
-                        0,
-                        mService.getBytes());
-
-            }
-        }
     }
 
     /**
