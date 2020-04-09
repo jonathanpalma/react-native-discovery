@@ -1,12 +1,13 @@
 {
   "name": "react-native-discovery",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Discover nearby devices using BLE for react native",
   "repository": {
     "type": "git",
-    "url": "https://github.com/N3TC4T/react-native-discovery.git"
+    "url": "git+https://github.com/jonathanpalma/react-native-discovery.git",
+    "baseUrl": "https://github.com/jonathanpalma/react-native-discovery"
   },
-  "license": "MIT",
+  "author": "Jonathan Palma <tanpalma04@gmail.com> (http://jonathanpalma.me)",
   "keywords": [
     "react-native",
     "android",
@@ -17,8 +18,14 @@
     "dicovery"
   ],
   "main": "RNDiscovery",
+  "license": "MIT",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
   "peerDependencies": {
-    "react-native": "^0.41.2"
+    "react": "^16.8.1",
+    "react-native": ">=0.60.0-rc.0 <1.0.x"
   },
-  "author": "N3TC4T <netcat.av@gmail.com>"
-}
+  "devDependencies": {
+    "react": "^16.9.0",
+    "react-native": "^0.61.5"
+  }

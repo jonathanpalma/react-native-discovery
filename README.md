@@ -1,23 +1,32 @@
 # React Native Discovery
+
 Discover nearby devices using BLE [Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy).
 
-This is a porting of https://github.com/yonahforst/react-native-discovery project with alot of changes and bug fixes.
+This is a fork from https://github.com/N3TC4T/react-native-discovery.
 
 ![IMG_1547](https://user-images.githubusercontent.com/6250203/54543335-c7113e80-499d-11e9-9a21-6d6f49ae58c0.jpg)
 
 
 ## What
-RNDiscovery is a useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (UUID) that can be an unique ID for device or user.
+
+Discovery is a useful library for discovering nearby devices with BLE(Bluetooth Low Energy) and for exchanging a value (UUID) that can be an unique ID for device or user.
 
 ## Supported Platforms
-- iOS 8+
+- iOS 9+
 - Android (API 19+)
 
 ## Getting started
 
 ````
-npm install --save https://github.com/N3TC4T/react-native-discovery	
+npm install --save https://github.com/jonathanpalma/react-native-discovery	
 ````
+
+### Mostly automatic installation
+
+`$ react-native link react-native-discovery`
+
+
+<!-- ### Manual installation
 
 #### iOS
 
@@ -79,7 +88,7 @@ public class MainActivity extends ReactActivity {
     ...
 }
 ```
-
+ -->
 
 
 #### Example
