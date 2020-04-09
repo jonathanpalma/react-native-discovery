@@ -1,6 +1,6 @@
 {
   "name": "react-native-discovery",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Discover nearby devices using BLE for react native",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "low energy",
     "dicovery"
   ],
-  "main": "RNDiscovery",
+  "main": "index.js",
   "license": "MIT",
   "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
