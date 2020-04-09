@@ -1,5 +1,5 @@
 {
-  "name": "@jonathanpalma/react-native-discovery",
+  "name": "react-native-discovery",
   "version": "0.9.0",
   "description": "Discover nearby devices using BLE for react native",
   "repository": {
