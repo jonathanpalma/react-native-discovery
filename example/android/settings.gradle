@@ -1,6 +1,0 @@
-rootProject.name = 'exampleDiscovery'
-
-include ':app'
-
-include ':react-native-discovery'
-project(':react-native-discovery').projectDir = new File(rootProject.projectDir, '../../android')
