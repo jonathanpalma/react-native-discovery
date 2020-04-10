@@ -19,11 +19,11 @@ export type DiscoverData = {
   usersChanged: boolean,
   uuid: string,
 };
-export type Data = BluetoothData | DiscoverData;
+export type EventListener = ((data: BluetoothData) => void) | ((data: DiscoverData) => void);
 
 export function useEventListener(
   eventType: EventType,
-  listener: (data: Data) => void
+  listener: EventListener
 ) {
   useEffect(() => {
     DeviceEventEmitter.addListener(eventType, listener);

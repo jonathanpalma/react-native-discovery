@@ -17,10 +17,10 @@ declare module "react-native-discovery" {
     usersChanged: boolean;
     uuid: string;
   };
-  export type Data = BluetoothData | DiscoverData;
+  export type EventListener = ((data: BluetoothData) => void) | ((data: DiscoverData) => void);
   export function useEventListener(
     eventType: EventType,
-    listener: (data: Data) => void
+    listener: EventListener
   ): void;
 
   export interface IDiscoveryModule {
@@ -36,10 +36,6 @@ declare module "react-native-discovery" {
     setShouldDiscover(shouldDiscover: boolean): Promise<true | string>;
     setUserTimeoutInterval(userTimeoutInterval: number): Promise<true | string>;
     setWaitForSeconds(waitForSeconds: number): Promise<true | string>;
-    useEventListener(
-      eventType: EventType,
-      listener: (data: Data) => void
-    ): void;
   }
 
   const Discovery: IDiscoveryModule;
