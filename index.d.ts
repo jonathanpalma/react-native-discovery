@@ -26,12 +26,22 @@ declare module "react-native-discovery" {
   export interface IDiscoveryModule {
     handleStateChange(state: number): void;
     initialize(uuid: string, service: string): Promise<string>;
+    isBluetoothEnabled(): Promise<boolean>;
     isLocationEnabled(): Promise<boolean>;
+    setBluetoothOn(): Promise<boolean>;
+    setBluetoothOff(): Promise<boolean>;
     setPaused(paused: boolean): Promise<true | string>;
     setScanForSeconds(scanForSeconds: number): Promise<true | string>;
     setShouldAdvertise(shouldAdvertise: boolean): Promise<true | string>;
     setShouldDiscover(shouldDiscover: boolean): Promise<true | string>;
     setUserTimeoutInterval(userTimeoutInterval: number): Promise<true | string>;
     setWaitForSeconds(waitForSeconds: number): Promise<true | string>;
+    useEventListener(
+      eventType: EventType,
+      listener: (data: Data) => void
+    ): void;
   }
+
+  const Discovery: IDiscoveryModule;
+  export default Discovery;
 }
