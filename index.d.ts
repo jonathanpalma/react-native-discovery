@@ -1,5 +1,5 @@
 declare module "react-native-discovery" {
-  export declare type BLEUser = {
+  export type BLEUser = {
     identified: boolean;
     peripheralId: string;
     proximity: number;
@@ -8,22 +8,22 @@ declare module "react-native-discovery" {
     updateTime: string;
     uuid: string;
   };
-  export declare type EventType = "bleStateChanged" | "discoveredUsers";
-  export declare type BluetoothData = {
+  export type EventType = "bleStateChanged" | "discoveredUsers";
+  export type BluetoothData = {
     isOn: boolean;
   };
-  export declare type DiscoverData = {
+  export type DiscoverData = {
     users: BLEUser[];
     usersChanged: boolean;
     uuid: string;
   };
-  export declare type Data = BluetoothData | DiscoverData;
-  export declare function useEventListener(
+  export type Data = BluetoothData | DiscoverData;
+  export function useEventListener(
     eventType: EventType,
     listener: (data: Data) => void
   ): void;
 
-  export declare interface IDiscoveryModule {
+  export interface IDiscoveryModule {
     handleStateChange(state: number): void;
     initialize(uuid: string, service: string): Promise<string>;
     isLocationEnabled(): Promise<boolean>;
